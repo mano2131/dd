@@ -1,0 +1,95 @@
+!DOCTYPE html
+html lang=en
+head
+    meta charset=UTF-8
+    meta name=viewport content=width=device-width, initial-scale=1.0
+    titleFMGE Pro QBanktitle
+    style
+        root { --p #006494; --bg #f4f7fa; --txt #1c1b1f; }
+        body { font-family sans-serif; margin 0; background var(--bg); color var(--txt); }
+        .sidebar { width 250px; height 100vh; background white; position fixed; border-right 1px solid #ddd; padding 20px; }
+        .main { margin-left 280px; padding 30px; }
+        .nav-btn { display block; width 100%; padding 15px; margin 10px 0; border none; background #eee; cursor pointer; text-align left; border-radius 8px; font-weight bold; }
+        .nav-btn.active { background var(--p); color white; }
+        .q-card { background white; padding 20px; border-radius 12px; box-shadow 0 2px 10px rgba(0,0,0,0.1); margin-bottom 20px; }
+        .opt { display block; padding 12px; margin 8px 0; border 2px solid #eee; border-radius 8px; cursor pointer; }
+        .opt.correct { background #d4edda; border-color #28a745; }
+        .opt.wrong { background #f8d7da; border-color #dc3545; }
+        .expl { background #e7f3ff; padding 15px; border-radius 8px; margin-top 15px; display none; }
+        #status { font-weight bold; color var(--p); }
+    style
+head
+body
+
+div class=sidebar
+    h2FMGE Apph2
+    p id=statusLoading Data...p
+    button class=nav-btn active onclick=loadSection('Main')Main Bankbutton
+    button class=nav-btn onclick=loadSection('PYQ')PYQ (Years)button
+    button class=nav-btn onclick=loadSection('GRP')GRP Sectionbutton
+    hr
+    button class=nav-btn style=background#ffcc00 onclick=alert('Custom Module Picks random SurgeryMedOBG first!')Custom Modulebutton
+div
+
+div class=main
+    h1 id=view-titleMain Bankh1
+    div id=content-areadiv
+div
+
+script
+    let rawData = null;
+
+     1. Fetch the data from your new JSON file
+    async function init() {
+        try {
+            const response = await fetch('Restructured_FMGE_Bank.json');
+            rawData = await response.json();
+            document.getElementById('status').innerText = ✅ Data Ready;
+            loadSection('Main');
+        } catch (e) {
+            document.getElementById('status').innerText = ❌ Error Loading JSON;
+        }
+    }
+
+     2. Load Section based on your Reference Page 1
+    function loadSection(section) {
+        const area = document.getElementById('content-area');
+        document.getElementById('view-title').innerText = section;
+        area.innerHTML = ;
+
+        let questions = [];
+        if (section === 'Main') questions = rawData.Main.slice(0, 20);  Show first 20
+        else if (section === 'GRP') questions = rawData.GRP.slice(0, 20);
+        
+        questions.forEach((q, idx) = {
+            const card = document.createElement('div');
+            card.className = 'q-card';
+            card.innerHTML = `
+                pstrongQstrong ${q.question}p
+                div id=opts-${idx}
+                    ${q.options.map((o, i) = `div class=opt onclick=check(${idx}, ${i}, ${q.answer_idx})${o}div`).join('')}
+                div
+                div class=expl id=expl-${idx}strongExplanationstrong ${q.explanation}div
+            `;
+            area.appendChild(card);
+        });
+    }
+
+     3. Practice Mode Logic (Ref Page 3 & 8)
+    function check(qIdx, selected, correct) {
+        const options = document.getElementById(`opts-${qIdx}`).children;
+        if (selected === correct) {
+            options[selected].classList.add('correct');
+             Placeholder for Sprinkles Animation (Ref Page 8)
+            console.log(Sprinkles!); 
+        } else {
+            options[selected].classList.add('wrong');
+            options[correct].classList.add('correct');
+        }
+        document.getElementById(`expl-${qIdx}`).style.display = 'block';
+    }
+
+    init();
+script
+body
+html
